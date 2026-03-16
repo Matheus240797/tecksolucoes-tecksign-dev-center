@@ -1,15 +1,18 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 1.0.0
+  description: Teck Sign API - Plataforma de Assinatura Digital
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Autenticação
+  - name: process
+    description: Processos de assinatura
 paths:
   /healthz:
     get:
@@ -24,7 +27,157 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/token:
+    post:
+      operationId: authenticate
+      tags: [auth]
+      summary: Autenticação
+      description: |
+        Obtém o token de acesso para consumir os endpoints da plataforma Teck Sign.
+        O token gerado tem validade de 1 hora e deve ser enviado no header `Authorization: Bearer {token}` em todas as requisições subsequentes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthRequest"
+      responses:
+        "200":
+          description: Token gerado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /processes:
+    post:
+      operationId: createProcess
+      tags: [process]
+      summary: Geração de Processo
+      description: |
+        Cria um novo processo de assinatura digital. Um processo representa um fluxo completo de assinatura que pode envolver um ou mais signatários e documentos.
+        
+        Após criado, o processo retorna um `processId` que deve ser utilizado para consultar o status e os documentos assinados.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProcessRequest"
+      responses:
+        "201":
+          description: Processo criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateProcessResponse"
+        "400":
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /processes/{processId}:
+    get:
+      operationId: getProcess
+      tags: [process]
+      summary: Consulta de Processo
+      description: |
+        Retorna os detalhes e o status atual de um processo de assinatura. 
+        
+        Utilize este endpoint para verificar se todos os signatários já assinaram e qual o estágio atual do processo.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: processId
+          in: path
+          required: true
+          description: ID único do processo
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Processo encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessResponse"
+        "404":
+          description: Processo não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /processes/{processId}/documents:
+    get:
+      operationId: getProcessDocuments
+      tags: [process]
+      summary: Consulta dos Documentos do Processo
+      description: |
+        Retorna os documentos associados a um processo de assinatura. Inclui os documentos originais e, quando disponíveis, os documentos já assinados pelas partes.
+        
+        Os documentos são retornados como URLs de download com validade temporária (60 minutos).
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: processId
+          in: path
+          required: true
+          description: ID único do processo
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Documentos do processo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessDocumentsResponse"
+        "404":
+          description: Processo não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     HealthStatus:
       type: object
@@ -34,3 +187,246 @@ components:
       required:
         - status
 
+    AuthRequest:
+      type: object
+      properties:
+        clientId:
+          type: string
+          description: ID do cliente fornecido pela Teck Sign
+          example: "client_abc123"
+        clientSecret:
+          type: string
+          description: Secret do cliente fornecido pela Teck Sign
+          example: "secret_xyz789"
+      required:
+        - clientId
+        - clientSecret
+
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: Token JWT de acesso
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        tokenType:
+          type: string
+          description: Tipo do token
+          example: "Bearer"
+        expiresIn:
+          type: integer
+          description: Validade do token em segundos
+          example: 3600
+      required:
+        - accessToken
+        - tokenType
+        - expiresIn
+
+    Signatory:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nome completo do signatário
+          example: "João da Silva"
+        email:
+          type: string
+          format: email
+          description: E-mail do signatário
+          example: "joao.silva@empresa.com.br"
+        cpf:
+          type: string
+          description: CPF do signatário (apenas dígitos)
+          example: "12345678900"
+        signingOrder:
+          type: integer
+          description: Ordem de assinatura (1 = primeiro)
+          example: 1
+      required:
+        - name
+        - email
+
+    CreateProcessRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título do processo
+          example: "Contrato de Prestação de Serviços - Empresa XYZ"
+        message:
+          type: string
+          description: Mensagem enviada aos signatários por e-mail
+          example: "Por favor, assine o contrato de prestação de serviços."
+        documentBase64:
+          type: string
+          description: Documento PDF codificado em Base64
+          example: "JVBERi0xLjQKJcfs..."
+        signatories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Signatory"
+          description: Lista de signatários do processo
+        expiresAt:
+          type: string
+          format: date-time
+          description: Data de expiração do processo
+          example: "2026-04-15T23:59:59Z"
+      required:
+        - title
+        - documentBase64
+        - signatories
+
+    CreateProcessResponse:
+      type: object
+      properties:
+        processId:
+          type: string
+          format: uuid
+          description: ID único do processo criado
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        status:
+          type: string
+          enum: [pending, in_progress, completed, cancelled, expired]
+          description: Status do processo
+          example: "pending"
+        createdAt:
+          type: string
+          format: date-time
+          description: Data de criação do processo
+          example: "2026-03-16T10:00:00Z"
+        signingUrl:
+          type: string
+          description: URL para acompanhar o processo
+          example: "https://app.tecksign.com/process/550e8400-e29b-41d4-a716-446655440000"
+      required:
+        - processId
+        - status
+        - createdAt
+
+    SignatoryStatus:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "João da Silva"
+        email:
+          type: string
+          example: "joao.silva@empresa.com.br"
+        status:
+          type: string
+          enum: [pending, viewed, signed, refused]
+          example: "signed"
+        signedAt:
+          type: string
+          format: date-time
+          example: "2026-03-16T11:30:00Z"
+      required:
+        - name
+        - email
+        - status
+
+    ProcessResponse:
+      type: object
+      properties:
+        processId:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        title:
+          type: string
+          example: "Contrato de Prestação de Serviços - Empresa XYZ"
+        status:
+          type: string
+          enum: [pending, in_progress, completed, cancelled, expired]
+          example: "in_progress"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-03-16T10:00:00Z"
+        expiresAt:
+          type: string
+          format: date-time
+          example: "2026-04-15T23:59:59Z"
+        signatories:
+          type: array
+          items:
+            $ref: "#/components/schemas/SignatoryStatus"
+        totalSignatories:
+          type: integer
+          example: 2
+        signedCount:
+          type: integer
+          example: 1
+      required:
+        - processId
+        - title
+        - status
+        - createdAt
+        - signatories
+        - totalSignatories
+        - signedCount
+
+    ProcessDocument:
+      type: object
+      properties:
+        documentId:
+          type: string
+          format: uuid
+          example: "660e8400-e29b-41d4-a716-446655440001"
+        name:
+          type: string
+          example: "contrato-prestacao-servicos.pdf"
+        type:
+          type: string
+          enum: [original, signed]
+          description: "original = documento enviado; signed = documento com assinaturas"
+          example: "signed"
+        downloadUrl:
+          type: string
+          description: URL temporária para download (válida por 60 minutos)
+          example: "https://storage.tecksign.com/documents/..."
+        sizeBytes:
+          type: integer
+          example: 204800
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-03-16T10:00:00Z"
+      required:
+        - documentId
+        - name
+        - type
+        - downloadUrl
+        - createdAt
+
+    ProcessDocumentsResponse:
+      type: object
+      properties:
+        processId:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        documents:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProcessDocument"
+      required:
+        - processId
+        - documents
+
+    ErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 401
+        error:
+          type: string
+          example: "Unauthorized"
+        message:
+          type: string
+          example: "Credenciais inválidas ou token expirado"
+      required:
+        - statusCode
+        - error
+        - message

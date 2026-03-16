@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Days+One&family=Prompt:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --font-sans: 'Prompt', sans-serif;
+  --font-display: 'Days One', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Zero border-radius for sharp corners as requested */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+}
+
+/* 
+  Enforcing Dark Mode ALWAYS at the root level 
+  Background: #010810 -> HSL 212 88% 3%
+  Primary: #FF7864 -> HSL 8 100% 70%
+*/
+:root {
+  --background: 212 88% 3%;
+  --foreground: 210 40% 98%;
+
+  --card: 212 50% 6%;
+  --card-foreground: 210 40% 98%;
+  --card-border: 212 40% 12%;
+
+  --popover: 212 50% 6%;
+  --popover-foreground: 210 40% 98%;
+  --popover-border: 212 40% 12%;
+
+  --primary: 8 100% 70%;
+  --primary-foreground: 0 0% 10%;
+
+  --secondary: 212 40% 12%;
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 212 40% 12%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  --accent: 8 100% 70%;
+  --accent-foreground: 0 0% 10%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 212 40% 12%;
+  --input: 212 40% 12%;
+  --ring: 8 100% 70%;
+
+  --sidebar: 212 88% 3%;
+  --sidebar-foreground: 240 4.8% 95.9%;
+  --sidebar-border: 212 40% 12%;
+  --sidebar-primary: 8 100% 70%;
+  --sidebar-primary-foreground: 0 0% 10%;
+  --sidebar-accent: 212 40% 12%;
+  --sidebar-accent-foreground: 240 4.8% 95.9%;
+  --sidebar-ring: 8 100% 70%;
+
+  --radius: 0px;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground selection:bg-primary/30 selection:text-primary-foreground;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply font-normal tracking-wide;
+  }
+}
+
+/* --- Swagger UI Dark Mode Overrides --- */
+.swagger-ui {
+  color: hsl(var(--foreground)) !important;
+  font-family: var(--font-sans) !important;
+}
+.swagger-ui .info .title,
+.swagger-ui .info li,
+.swagger-ui .info p,
+.swagger-ui .info table,
+.swagger-ui .opblock .opblock-summary-operation-id,
+.swagger-ui .opblock .opblock-summary-path,
+.swagger-ui .opblock .opblock-summary-path__deprecated,
+.swagger-ui .tab li {
+  color: hsl(var(--foreground)) !important;
+  font-family: var(--font-sans) !important;
+}
+.swagger-ui .scheme-container {
+  background-color: hsl(var(--card)) !important;
+  box-shadow: none !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+.swagger-ui .opblock-tag {
+  color: hsl(var(--foreground)) !important;
+  border-bottom: 1px solid hsl(var(--border)) !important;
+  font-family: var(--font-display) !important;
+}
+.swagger-ui .opblock {
+  background: hsl(var(--card)) !important;
+  border-color: hsl(var(--border)) !important;
+  border-radius: 0 !important;
+}
+.swagger-ui .opblock .opblock-section-header {
+  background: hsl(var(--background)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+.swagger-ui section.models {
+  border-color: hsl(var(--border)) !important;
+}
+.swagger-ui section.models .model-container {
+  background: hsl(var(--card)) !important;
+}
+.swagger-ui .model-title {
+  color: hsl(var(--foreground)) !important;
+}
+.swagger-ui .model, .swagger-ui .model .property.primitive {
+  color: hsl(var(--muted-foreground)) !important;
+}
+.swagger-ui .btn {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-family: var(--font-sans) !important;
+  font-weight: 600 !important;
+}
+.swagger-ui .btn.execute {
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  border-color: hsl(var(--primary)) !important;
+}
+.swagger-ui input[type=text], .swagger-ui select, .swagger-ui textarea {
+  background: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+  border-radius: 0 !important;
+}
+.swagger-ui .parameters-col_description p {
+  color: hsl(var(--muted-foreground)) !important;
+}
+.swagger-ui table thead tr td, .swagger-ui table thead tr th {
+  color: hsl(var(--foreground)) !important;
+  border-bottom: 1px solid hsl(var(--border)) !important;
+}
+.swagger-ui .response-col_status {
+  color: hsl(var(--foreground)) !important;
+}
+.swagger-ui .response-col_description {
+  color: hsl(var(--muted-foreground)) !important;
+}
+.swagger-ui .markdown p, .swagger-ui .markdown pre, .swagger-ui .markdown code {
+  color: hsl(var(--muted-foreground)) !important;
+}

@@ -1,3 +1,26 @@
+# Teck Sign Developer Center
+
+## Project Overview
+
+Developer documentation hub for the Teck Sign digital signature platform. Technical partners can use this site to learn how to integrate with the Teck Sign API.
+
+URL: `/` (root)
+
+## Key Features
+- Dark mode developer documentation portal
+- Left sidebar navigation (Introduction, Getting Started, Authentication, Endpoints, API Reference)
+- 4 documented API endpoints: Authentication, Create Process, Get Process, Get Documents
+- Live interactive Swagger UI that auto-syncs from `/api/swagger.json`
+- Code examples in cURL, Node.js, and Python for each endpoint
+- Copy-to-clipboard on all code blocks
+
+## Swagger Sync (NestJS)
+The Swagger UI on the API Reference page fetches live from `/api/swagger.json`.
+In production, point the SwaggerUI `url` prop to your NestJS swagger JSON endpoint (e.g. `https://api.tecksign.com/api-json`).
+The backend route in `artifacts/api-server/src/routes/swagger.ts` reads `lib/api-spec/openapi.yaml` dynamically — so updating the YAML automatically updates the documentation.
+
+---
+
 # Workspace
 
 ## Overview
