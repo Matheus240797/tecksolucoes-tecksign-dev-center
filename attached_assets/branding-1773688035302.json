@@ -1,0 +1,100 @@
+{
+  "colorScheme": "dark",
+  "fonts": [
+    {
+      "family": "Prompt",
+      "role": "body"
+    },
+    {
+      "family": "Days One",
+      "role": "heading"
+    },
+    {
+      "family": "Syne",
+      "role": "display"
+    },
+    {
+      "family": "Poppins",
+      "role": "unknown"
+    }
+  ],
+  "colors": {
+    "primary": "#FF7864",
+    "accent": "#010810",
+    "background": "#010810",
+    "textPrimary": "#010810",
+    "link": "#010810"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Prompt",
+      "heading": "Days One"
+    },
+    "fontStacks": {
+      "heading": [
+        "Days One",
+        "sans-serif"
+      ],
+      "body": [
+        "Prompt",
+        "sans-serif"
+      ],
+      "paragraph": [
+        "Poppins",
+        "sans-serif"
+      ]
+    },
+    "fontSizes": {
+      "h1": "80px",
+      "h2": "90px",
+      "body": "25px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 8,
+    "borderRadius": "0px"
+  },
+  "components": {},
+  "images": {
+    "logo": "File saved at: attached_assets/logo.png",
+    "favicon": "File saved at: attached_assets/favicon.png",
+    "ogImage": null,
+    "logoHref": "File saved at: attached_assets/logoHref.html"
+  },
+  "__llm_logo_reasoning": {
+    "selectedIndex": 0,
+    "reasoning": "Selected #0 because it is the only visible candidate with a reasonable size and links to the homepage, aligning with the brand 'Teck Soluções'.",
+    "confidence": 0.9,
+    "source": "llm"
+  },
+  "personality": {
+    "tone": "modern",
+    "energy": "medium",
+    "targetAudience": "business professionals"
+  },
+  "designSystem": {
+    "framework": "custom",
+    "componentLibrary": ""
+  },
+  "confidence": {
+    "buttons": 0,
+    "colors": 0.9,
+    "overall": 0.45
+  },
+  "__llm_metadata": {
+    "logoSelection": {
+      "llmCalled": true,
+      "llmSucceeded": true,
+      "finalSource": "llm",
+      "rawLogoSelection": {
+        "selectedLogoIndex": 0,
+        "selectedLogoReasoning": "Selected #0 because it is the only visible candidate with a reasonable size and links to the homepage, aligning with the brand 'Teck Soluções'.",
+        "confidence": 0.9
+      }
+    },
+    "buttonClassification": {
+      "llmCalled": false,
+      "llmSucceeded": false
+    }
+  }
+}
